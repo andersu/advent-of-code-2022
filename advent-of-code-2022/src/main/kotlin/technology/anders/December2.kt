@@ -3,23 +3,6 @@ package technology.anders
 import java.io.File
 import java.lang.IllegalArgumentException
 
-enum class Shape {
-    ROCK,
-    PAPER,
-    SCISSORS
-}
-
-enum class Outcome {
-    WIN,
-    DRAW,
-    LOSS
-}
-
-data class Round(
-    val myShape: Shape,
-    val opponentShape: Shape
-)
-
 fun main() {
     val rockPaperScissors = RockPaperScissors()
     rockPaperScissors.followStrategyPart1()
@@ -47,7 +30,7 @@ class RockPaperScissors {
             val preferredOutcome = mapLetterToOutcome(letters[1])
             Round(
                 myShape = chooseShape(opponentShape, preferredOutcome),
-                opponentShape = mapLetterToShapePart1(letters[0])
+                opponentShape = mapLetterToShapePart2(letters[0])
             )
         }
         val totalScore = rounds.sumOf { calculateScore(it) }
@@ -117,3 +100,20 @@ class RockPaperScissors {
         return scoreForShape + scoreForResult
     }
 }
+
+enum class Shape {
+    ROCK,
+    PAPER,
+    SCISSORS
+}
+
+enum class Outcome {
+    WIN,
+    DRAW,
+    LOSS
+}
+
+data class Round(
+    val myShape: Shape,
+    val opponentShape: Shape
+)

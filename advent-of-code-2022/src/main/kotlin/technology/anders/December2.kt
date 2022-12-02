@@ -11,7 +11,8 @@ fun main() {
 
 class RockPaperScissors {
     fun followStrategyPart1() {
-        val rounds = readLinesFromInput().map {
+        val lines = readLinesFromResourceFile("december_2_input.txt")
+        val rounds = lines.map {
             val letters = it.split(" ")
             Round(
                 myShape = mapLetterToShapePart1(letters[1]),
@@ -24,7 +25,8 @@ class RockPaperScissors {
     }
 
     fun followStrategyPart2() {
-        val rounds = readLinesFromInput().map {
+        val lines = readLinesFromResourceFile("december_2_input.txt")
+        val rounds = lines.map {
             val letters = it.split(" ")
             val opponentShape = mapLetterToShapePart1(letters[0])
             val preferredOutcome = mapLetterToOutcome(letters[1])
@@ -37,8 +39,6 @@ class RockPaperScissors {
 
         println("Second answer: $totalScore")
     }
-
-    private fun readLinesFromInput() = File("src/main/resources/december_2_input.txt").readLines()
 
     private fun mapLetterToShapePart1(letter: String): Shape =
         when (letter) {

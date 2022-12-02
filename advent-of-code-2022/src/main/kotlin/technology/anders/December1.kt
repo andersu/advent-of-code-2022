@@ -9,10 +9,10 @@ fun main() {
 class ElfCalorieCounter {
     fun findMaxCalories() {
         val caloriesPerElfList = mutableListOf<Int>()
-
         var currentElfCalories = 0
 
-        File("src/main/resources/december_1_input.txt").readLines().forEach {
+        val lines = readLinesFromResourceFile("december_1_input.txt")
+        lines.forEach {
             if (it.isNotBlank()) {
                 currentElfCalories += it.toInt()
             } else {

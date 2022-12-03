@@ -1,7 +1,5 @@
 package technology.anders
 
-import java.io.File
-
 fun main() {
     ElfCalorieCounter().findMaxCalories()
 }

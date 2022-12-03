@@ -1,8 +1,5 @@
 package technology.anders
 
-import java.io.File
-import java.lang.IllegalArgumentException
-
 fun main() {
     val rockPaperScissors = RockPaperScissors()
     rockPaperScissors.followStrategyPart1()

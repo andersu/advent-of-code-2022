@@ -1,16 +1,25 @@
 package technology.anders
 
 fun main() {
-    CrateStacker().solveFirstPart()
+    val crateStacker = CrateStacker()
+    crateStacker.solveFirstPart()
+    crateStacker.solveSecondPart()
 }
 
 class CrateStacker {
 
     fun solveFirstPart() {
         val stackerInput = parseInput()
-        val updatedStacks = moveCrates(stackerInput)
-        val topCrates = updatedStacks.values.map { it.first() }.joinToString("")
+        val updatedStacks = CrateMover9000().moveCrates(stackerInput)
+        val topCrates = getTopCrates(updatedStacks)
         println("First answer: $topCrates")
+    }
+
+    fun solveSecondPart() {
+        val stackerInput = parseInput()
+        val updatedStacks = CrateMover9001().moveCrates(stackerInput)
+        val topCrates = getTopCrates(updatedStacks)
+        println("Second answer: $topCrates")
     }
 
     private fun parseInput(): StackerInput {
@@ -59,7 +68,12 @@ class CrateStacker {
             )
         }
 
-    private fun moveCrates(stackerInput: StackerInput): Map<Int,String> {
+    private fun getTopCrates(stacks: Map<Int, String>): String =
+        stacks.values.map { it.first() }.joinToString("")
+}
+
+class CrateMover9000 {
+    fun moveCrates(stackerInput: StackerInput): Map<Int, String> {
         val updatedStacks = stackerInput.stacks.toMutableMap()
         stackerInput.moves.forEach { move ->
             repeat(move.amount) {
@@ -72,6 +86,24 @@ class CrateStacker {
                     updatedStacks[move.fromStack] = fromStack.substring(1)
                     updatedStacks[move.toStack] = crateToMove + toStack
                 }
+            }
+        }
+        return updatedStacks
+    }
+}
+
+class CrateMover9001 {
+    fun moveCrates(stackerInput: StackerInput): Map<Int, String> {
+        val updatedStacks = stackerInput.stacks.toMutableMap()
+        stackerInput.moves.forEach { move ->
+            val fromStack = updatedStacks[move.fromStack]
+            val toStack = updatedStacks[move.toStack]
+            if (fromStack == null || toStack == null) {
+                println("Skipping invalid move: $move")
+            } else {
+                val cratesToMove = fromStack.substring(0.until(move.amount))
+                updatedStacks[move.fromStack] = fromStack.substring(move.amount)
+                updatedStacks[move.toStack] = cratesToMove + toStack
             }
         }
         return updatedStacks

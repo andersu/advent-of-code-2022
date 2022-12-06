@@ -23,15 +23,8 @@ class DataStreamDecoder {
         println("Second answer: $index")
     }
 
-    private fun findIndexAfterFirstMarker(dataStream: String, markerLength: Int): Int {
-        dataStream.indices.forEach { index ->
-            val potentialMarker = dataStream.subSequence(index until index + markerLength)
-            val isMarker = potentialMarker.toSet().size == markerLength
-            if (isMarker) {
-                return index + markerLength
-            }
-        }
-
-        return -1
-    }
+    private fun findIndexAfterFirstMarker(dataStream: String, markerLength: Int): Int =
+        dataStream.windowed(markerLength).indexOfFirst {
+            it.toSet().size == markerLength
+        } + markerLength
 }

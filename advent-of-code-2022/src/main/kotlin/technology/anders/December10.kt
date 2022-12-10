@@ -1,27 +1,28 @@
 package technology.anders
 
 fun main() {
-    val cathodeRayTube = CathodeRayTube()
-    val firstAnswer = cathodeRayTube.solveFirstPart()
-    println("First answer: $firstAnswer")
+    val cathodeRayTubeController = CathodeRayTubeController()
+    cathodeRayTubeController.solveFirstPart()
+
 }
 
-class CathodeRayTube {
-    fun solveFirstPart(): Int {
+class CathodeRayTubeController {
+    fun solveFirstPart() {
         val lines = readLinesFromResourceFile("december_10_input.txt")
-        val cpu = Cpu()
+        val cathodeRayTube = CathodeRayTube()
         lines.forEach {
-            when  {
-                it == "noop" -> cpu.performNoop()
+            when {
+                it == "noop" -> cathodeRayTube.performNoop()
                 it.startsWith("addx") -> {
                     val value = it.split(" ").last().toInt()
-                    cpu.performAddX(value)
+                    cathodeRayTube.performAddX(value)
                 }
             }
         }
 
-        println(cpu.xHistory)
-        return executeSecretSignalStrengthAlgorithm(cpu.xHistory)
+        val firstAnswer = executeSecretSignalStrengthAlgorithm(cathodeRayTube.xHistory)
+        println("First answer: $firstAnswer")
+        cathodeRayTube.printScreen()
     }
 
     private fun executeSecretSignalStrengthAlgorithm(xHistory: List<Int>) =
@@ -30,23 +31,43 @@ class CathodeRayTube {
     private fun List<Int>.getSignalStrength(index: Int) = index * this[index - 1]
 }
 
-class Cpu {
+class CathodeRayTube {
     private var x = 1
     private val _xHistory = mutableListOf(x)
     private var cycle = 0
 
+    private var pixels = MutableList(6 * 40) { '.' }
+
     val xHistory get() = _xHistory
 
     fun performNoop() {
-        cycle += 1
+        performCycle()
         _xHistory += x
     }
 
     fun performAddX(value: Int) {
-        cycle += 1
+        performCycle()
         _xHistory += x
-        cycle += 1
+        performCycle()
         x += value
         _xHistory += x
+    }
+
+    private fun performCycle() {
+        drawPixel()
+        cycle += 1
+    }
+
+    private fun drawPixel() {
+        if (cycle % 40 in x-1..x+1) {
+            pixels[cycle] = '#'
+        }
+    }
+
+    fun printScreen() {
+        println()
+        pixels.chunked(40).forEach {
+            println (it.joinToString(" "))
+        }
     }
 }

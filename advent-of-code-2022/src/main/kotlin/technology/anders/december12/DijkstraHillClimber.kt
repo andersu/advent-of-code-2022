@@ -2,10 +2,9 @@ package technology.anders.december12
 
 class DijkstraHillClimber(private val hillMap: HillMap) {
 
-    private var startTime: Long = 0L
     fun findShortestRoute(): Int {
-        startTime = System.currentTimeMillis()
         hillMap.hills[hillMap.start]!!.updateShortestDistance(0)
+
         while (!hillMap.hills[hillMap.end]!!.visited) {
             climb()
         }
@@ -14,17 +13,17 @@ class DijkstraHillClimber(private val hillMap: HillMap) {
     }
 
     private fun climb() {
-        val nextNodeToCheck = hillMap.hills.values.filter { !it.visited }.minBy { it.shortestDistance }
-        nextNodeToCheck.markAsVisited()
+        val nextHillToCheck = hillMap.hills.values.filter { !it.visited }.minBy { it.shortestDistance }
+        nextHillToCheck.markAsVisited()
 
-        val currentCoordinates = nextNodeToCheck.coordinates
+        val currentCoordinates = nextHillToCheck.coordinates
 
-        val newReachableNeighbors = currentCoordinates.getNeighbors().filter { coordinates ->
+        val reachableNeighbors = currentCoordinates.getNeighbors().filter { coordinates ->
             hillMap.hills[coordinates]!!.height <= hillMap.hills[currentCoordinates]!!.height + 1
                     && coordinates !in hillMap.hills.values.filter { it.visited }.map { it.coordinates }
         }
 
-        newReachableNeighbors.forEach {
+        reachableNeighbors.forEach {
             val currentShortestPath = hillMap.hills[it]!!.shortestDistance
 
             val newPathLength = hillMap.hills[currentCoordinates]!!.shortestDistance + 1

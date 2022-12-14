@@ -14,6 +14,10 @@ data class Hill(
         _visited = true
     }
 
+    fun clearVisited() {
+        _visited = false
+    }
+
     fun updateShortestDistance(newShortestDistance: Int) {
         _shortestDistance = newShortestDistance
     }

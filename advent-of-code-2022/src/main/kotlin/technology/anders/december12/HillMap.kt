@@ -7,4 +7,8 @@ data class HillMap(
 ) {
     val rows = hills.maxOf { it.key.y + 1 }
     val columns = hills.maxOf { it.key.x + 1 }
+
+    fun reset() {
+        hills.values.forEach { it.clearVisited() }
+    }
 }

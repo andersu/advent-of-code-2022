@@ -2,14 +2,20 @@ package technology.anders.december12
 
 class DijkstraHillClimber(private val hillMap: HillMap) {
 
-    fun findShortestRoute(): Int {
-        hillMap.hills[hillMap.start]!!.updateShortestDistance(0)
+    fun findShortestRoute(fromAnyHeight0: Boolean): Int {
+        hillMap.hills[hillMap.end]!!.updateShortestDistance(0)
 
-        while (!hillMap.hills[hillMap.end]!!.visited) {
-            climb()
+        return if (fromAnyHeight0) {
+            while (!hillMap.hills.values.any { it.height == 0 && it.visited }) {
+                climb()
+            }
+            hillMap.hills.values.filter { it.height == 0 && it.visited }.minOf { it.shortestDistance }
+        } else {
+            while (!hillMap.hills[hillMap.start]!!.visited) {
+                climb()
+            }
+            hillMap.hills[hillMap.start]!!.shortestDistance
         }
-
-        return hillMap.hills[hillMap.end]!!.shortestDistance
     }
 
     private fun climb() {
@@ -19,7 +25,7 @@ class DijkstraHillClimber(private val hillMap: HillMap) {
         val currentCoordinates = nextHillToCheck.coordinates
 
         val reachableNeighbors = currentCoordinates.getNeighbors().filter { coordinates ->
-            hillMap.hills[coordinates]!!.height <= hillMap.hills[currentCoordinates]!!.height + 1
+            hillMap.hills[coordinates]!!.height >= hillMap.hills[currentCoordinates]!!.height - 1
                     && coordinates !in hillMap.hills.values.filter { it.visited }.map { it.coordinates }
         }
 

@@ -6,7 +6,9 @@ import java.lang.Integer.max
 fun main() {
     val distressSignal = DistressSignal()
     val firstAnswer = distressSignal.solveFirstPart()
+    val secondAnswer = distressSignal.solveSecondPart()
     println("First answer: $firstAnswer")
+    println("Second answer: $secondAnswer")
 }
 
 class DistressSignal {
@@ -32,10 +34,23 @@ class DistressSignal {
         return indicesInRightOrder.sum()
     }
 
+    fun solveSecondPart(): Int {
+        val lines = readLinesFromResourceFile("december_13_input.txt")
+        val dividerPacketLines = listOf("[[2]]", "[[6]]")
+        val sortedPackets = (lines + dividerPacketLines)
+            .filter { it.isNotBlank() }
+            .map { Packet(parser.parsePacketContent(it)) }
+            .sortedWith(PacketComparator())
+
+        val firstDividerIndex = sortedPackets.indexOfFirst { it.values == listOf(listOf(2))} + 1
+        val secondDividerIndex = sortedPackets.indexOfFirst { it.values == listOf(listOf(6)) } + 1
+        return firstDividerIndex * secondDividerIndex
+    }
+
     private fun mapLinesToPacketPairs(lines: List<String>) =
         lines.chunked(3).map {
-            val firstListString = it[0].substring(1, it[0].length)
-            val secondListString = it[1].substring(1, it[1].length)
+            val firstListString = it[0]
+            val secondListString = it[1]
 
             PacketPair(
                 Packet(parser.parsePacketContent(firstListString)),
@@ -49,32 +64,38 @@ data class PacketPair(
     val second: Packet
 ) {
     fun isInRightOrder(): Boolean =
-        compare(first.values, second.values) <= 0
+        PacketComparator().compare(first, second) <= 0
 }
 
-private fun compare(left: Any, right: Any): Int {
-    println("  - Compare $left vs $right")
-    return when {
-        left is Int && right is Int -> left - right
-        left is Int -> compare(listOf(left), right)
-        right is Int -> compare(left, listOf(right))
-        else -> {
-            left as List<Any>
-            right as List<Any>
-            for (i in 0.until(max(left.size, right.size))) {
-                if (i >= left.size) {
-                    println("    - Left side ran out of items")
-                    return -1
-                }
-                if (i >= right.size) {
-                    println("    - Right side ran out of items")
-                    return 1
-                }
-                val itemCompare = compare(left[i], right[i])
-                if (itemCompare != 0) return itemCompare
-            }
+class PacketComparator: Comparator<Packet> {
+    override fun compare(o1: Packet, o2: Packet): Int {
+        return compareValues(o1.values, o2.values)
+    }
 
-            return 0
+    private fun compareValues(left: Any, right: Any): Int {
+        println("  - Compare $left vs $right")
+        return when {
+            left is Int && right is Int -> left - right
+            left is Int -> compareValues(listOf(left), right)
+            right is Int -> compareValues(left, listOf(right))
+            else -> {
+                left as List<Any>
+                right as List<Any>
+                for (i in 0.until(max(left.size, right.size))) {
+                    if (i >= left.size) {
+                        println("    - Left side ran out of items")
+                        return -1
+                    }
+                    if (i >= right.size) {
+                        println("    - Right side ran out of items")
+                        return 1
+                    }
+                    val itemCompare = compareValues(left[i], right[i])
+                    if (itemCompare != 0) return itemCompare
+                }
+
+                return 0
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ package technology.anders.december13
 class Parser {
 
     fun parsePacketContent(line: String): List<Any> =
-        line.parseValues().first
+        line.parseValues().first.first() as List<Any>
 
     private fun String.parseValues(): Pair<List<Any>, Int> {
         val list = mutableListOf<Any>()

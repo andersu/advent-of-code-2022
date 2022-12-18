@@ -3,31 +3,36 @@ package technology.anders.december14
 private val sandStartCoordinates = Pair(500, 0)
 
 class CaveMap(
-    initialRocks: List<CaveMapCoordinates>
+    initialRocks: Map<Coordinates, CaveMapUnit>,
+    private val withFloor: Boolean
 ) {
-    private val map: MutableList<CaveMapCoordinates> = initialRocks.toMutableList()
+    private val solidCoordinatesMap: MutableMap<Coordinates, CaveMapUnit> = initialRocks.toMutableMap()
+
+    private val floorY = initialRocks.keys.maxOf { it.y } + 2
 
     fun simulateSandFalling() {
-        while(true) {
-            val firstSolid = map.filter { it.x == sandStartCoordinates.first }.minBy { it.y }
-
+        while (true) {
             val restingCoordinates = findRestingCoordinates(
                 fromX = sandStartCoordinates.first,
-                fromY = firstSolid.y - 1
+                fromY = sandStartCoordinates.second
             ) ?: break
 
-            map.add(CaveMapCoordinates(restingCoordinates.first, restingCoordinates.second, CaveMapUnit.SAND))
+            val restingSandCoordinates = Coordinates(restingCoordinates.first, restingCoordinates.second)
+            solidCoordinatesMap[restingSandCoordinates] = CaveMapUnit.SAND
+            if (restingCoordinates == sandStartCoordinates) break
         }
     }
 
-    fun getNumberOfRestingSandUnits() = map.count { it.unit == CaveMapUnit.SAND }
+    fun getNumberOfRestingSandUnits() = solidCoordinatesMap.values.count { it == CaveMapUnit.SAND }
 
     private fun findRestingCoordinates(fromX: Int, fromY: Int): Pair<Int, Int>? {
-        if (fromY > map.maxOf { it.y }) return null // Sand is falling into the abyss
+        if (!withFloor && fromY > floorY - 2) return null // Sand is falling into the abyss
 
-        val downIsSolid = map.any { it.x == fromX && it.y == fromY + 1 }
-        val leftDownIsSolid = map.any { it.x == fromX - 1 && it.y == fromY + 1 }
-        val rightDownIsSolid = map.any { it.x == fromX + 1 && it.y == fromY + 1 }
+        if (withFloor && fromY == floorY - 1) return Pair(fromX, fromY)
+
+        val downIsSolid = solidCoordinatesMap[Coordinates(fromX, fromY + 1)] != null
+        val leftDownIsSolid = solidCoordinatesMap[Coordinates(fromX - 1, fromY + 1)] != null
+        val rightDownIsSolid = solidCoordinatesMap[Coordinates(fromX + 1, fromY + 1)] != null
 
         return when {
             downIsSolid && leftDownIsSolid && rightDownIsSolid -> Pair(fromX, fromY)
@@ -36,5 +41,4 @@ class CaveMap(
             else -> findRestingCoordinates(fromX + 1, fromY + 1)
         }
     }
-
 }

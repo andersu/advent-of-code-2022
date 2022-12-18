@@ -5,8 +5,8 @@ import kotlin.math.min
 
 class CaveMapParser {
 
-    fun parseCaveMap(lines: List<String>): CaveMap {
-        val initialRockCoordinates = mutableSetOf<CaveMapCoordinates>()
+    fun parseCaveMap(lines: List<String>): Map<Coordinates, CaveMapUnit> {
+        val initialRockCoordinates = mutableSetOf<Coordinates>()
         lines.forEach { line ->
             val coordinateStrings = line.split("->").map { it.trim() }
             val coordinatesList = coordinateStrings.map {
@@ -21,16 +21,18 @@ class CaveMapParser {
                 val secondY = it.last().second
                 if (firstX != secondX) {
                     for (x in min(firstX, secondX)..max(firstX, secondX)) {
-                        initialRockCoordinates.add(CaveMapCoordinates(x, firstY, CaveMapUnit.ROCK))
+                        initialRockCoordinates.add(Coordinates(x, firstY))
                     }
                 } else if (firstY != secondY) {
                     for (y in min(firstY, secondY)..max(firstY, secondY)) {
-                        initialRockCoordinates.add(CaveMapCoordinates(firstX, y, CaveMapUnit.ROCK))
+                        initialRockCoordinates.add(Coordinates(firstX, y))
                     }
                 }
             }
         }
-        
-        return CaveMap(initialRockCoordinates.toList())
+
+        val map = HashMap<Coordinates, CaveMapUnit>()
+        initialRockCoordinates.forEach { map[it] = CaveMapUnit.ROCK }
+        return map
     }
 }

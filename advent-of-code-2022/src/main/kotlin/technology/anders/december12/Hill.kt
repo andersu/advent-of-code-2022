@@ -1,5 +1,7 @@
 package technology.anders.december12
 
+import technology.anders.common.Coordinates
+
 data class Hill(
     val coordinates: Coordinates,
     val height: Int

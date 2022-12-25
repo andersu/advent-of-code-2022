@@ -1,5 +1,7 @@
 package technology.anders.december14
 
+import technology.anders.common.Coordinates
+
 private val sandStartCoordinates = Pair(500, 0)
 
 class CaveMap(

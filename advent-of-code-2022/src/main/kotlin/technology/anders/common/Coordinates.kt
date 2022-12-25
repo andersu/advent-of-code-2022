@@ -1,4 +1,4 @@
-package technology.anders.december14
+package technology.anders.common
 
 data class Coordinates(
     val x: Int,

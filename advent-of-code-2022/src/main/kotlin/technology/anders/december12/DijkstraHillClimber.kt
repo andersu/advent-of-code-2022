@@ -1,5 +1,7 @@
 package technology.anders.december12
 
+import technology.anders.common.Coordinates
+
 class DijkstraHillClimber(private val hillMap: HillMap) {
 
     fun findShortestRoute(fromAnyHeight0: Boolean): Int {

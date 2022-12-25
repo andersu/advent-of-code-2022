@@ -1,5 +1,6 @@
 package technology.anders.december14
 
+import technology.anders.common.Coordinates
 import kotlin.math.max
 import kotlin.math.min
 
